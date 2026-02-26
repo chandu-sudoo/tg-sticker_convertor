@@ -1,4 +1,5 @@
 python-telegram-bot[all]
+rembg
+onnxruntime
 Pillow
 numpy
-backgroundremover
