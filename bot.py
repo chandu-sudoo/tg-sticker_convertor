@@ -102,20 +102,13 @@ def frames_to_webm(frames_dir: Path, out: str, fps: float, crf: int = 33):
 
 
 def remove_bg_frames(src_dir: Path, dst_dir: Path):
-    try:
-        from rembg import remove
-    except ImportError:
-        raise RuntimeError("rembg is not installed. Run: pip install rembg onnxruntime")
-
+    from backgroundremover.bg import remove
     dst_dir.mkdir(parents=True, exist_ok=True)
     frames = sorted(src_dir.glob("f*.png"))
-    logger.info("Removing background from %d frame(s)...", len(frames))
-    for i, fp in enumerate(frames, 1):
-        data = remove(fp.read_bytes())
+    for fp in frames:
+        data = remove(fp.read_bytes(), model_name="u2netp",  # smaller model
+                      alpha_matting=False)
         (dst_dir / fp.name).write_bytes(data)
-        if i % 15 == 0:
-            logger.info("  %d / %d done", i, len(frames))
-
 
 # ═══════════════════════════ MAIN CONVERSION ═════════════════════════════════
 
@@ -331,3 +324,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
